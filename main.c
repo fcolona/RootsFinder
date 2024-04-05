@@ -7,7 +7,7 @@ int main(void) {
   int i = 0;
   while (1) {
     printf("Insert the terms of a continuous polynomial\n");
-    
+
     int coefficient = 1;
     int degree = 0;
 
@@ -31,7 +31,7 @@ int main(void) {
     }
     i++;
   }
-  printPolynomial(polynomial, i);
+  printPolynomial(polynomial, i + 1);
 
   printf("Is this your polynomial? (y/n) ");
   char response;

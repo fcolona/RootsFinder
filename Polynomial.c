@@ -1,9 +1,8 @@
 #include "Polynomial.h"
 #include <stdio.h>
+#include <math.h>
 
 void printPolynomial(Term *polynomial, int numberOfTerms) {
-  //starts at zero
-  numberOfTerms = numberOfTerms + 1;
   for (int i = 0; i < numberOfTerms; i++) {
     if (polynomial[i].coefficient > 0 && i > 0) {
       printf("+ ");
@@ -18,4 +17,13 @@ void printPolynomial(Term *polynomial, int numberOfTerms) {
     }
   }
   printf("\n");
+}
+
+double fOf(Term *polynomial, double x, int numberOfTerms){
+  double sum = 0;
+
+  for (int i = 0; i < numberOfTerms; i++) {
+      sum += pow(x, polynomial[i].degree) * polynomial[i].coefficient;;
+  }
+  return sum;
 }

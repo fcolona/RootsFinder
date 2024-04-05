@@ -7,3 +7,4 @@ typedef struct Term {
 } Term;
 
 void printPolynomial(Term *polynomial, int numberOfTerms);
+double fOf(Term* polynomial, double x, int numberOfTerms);
