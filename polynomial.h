@@ -15,3 +15,4 @@ typedef struct Polynomial {
 void printPolynomial(Polynomial *polynomial);
 double fOf(Polynomial *polynomial, double x);
 double findRoot(Polynomial *polynomial);
+double* refineInterval(Polynomial *polynomial, double* interval);

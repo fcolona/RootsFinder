@@ -30,9 +30,34 @@ double fOf(Polynomial *polynomial, double x){
             continue;
         }
         sum += (pow(x, polynomial->terms[i].degree) * polynomial->terms[i].coefficient);
-        printf("patial sum: %f\n", sum);
     }
     return sum;
+}
+
+double* refineInterval(Polynomial *polynomial, double* interval){
+    double middle = (interval[0] + interval[1])/2;    
+
+    double fOfMiddle = fOf(polynomial, middle);
+    if(fOfMiddle == 0){
+        interval[0] = middle;
+        interval[1] = middle;
+
+        return interval;
+    }
+    else if(fOfMiddle < 0){
+        if(fOf(polynomial, interval[0]) < 0){
+            interval[0] = middle;
+            return interval;
+        }
+        interval[1] = middle;
+        return interval;
+    }
+    else if(fOf(polynomial, interval[0]) > 0){
+        interval[0] = middle;
+        return interval;
+    }
+    interval[1] = middle;
+    return interval;
 }
 
 double findRoot(Polynomial *polynomial){
@@ -68,13 +93,15 @@ double findRoot(Polynomial *polynomial){
             }
 
             //There was a change of sign
-            if(lastfOfX  < 0 && fOfX > 0){
+            if(lastfOfX < 0 && fOfX > 0){
                 //The root is in this interval
                 printf("beginning: %d, end: %d\n", lastX, x);
+                break;
             }
             else if(lastfOfX  > 0 && fOfX < 0){
                 //The root is in this interval
                 printf("beginning: %d, end: %d\n", lastX, x);
+                break;
             }
 
             lastfOfX = fOfX;
