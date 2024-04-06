@@ -1,44 +1,57 @@
 #include "Polynomial.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 int main(void) {
-  Term polynomial[MAX_NUM_OF_TERMS];
+    Polynomial *polynomial = malloc(sizeof(Polynomial));
+    polynomial->terms = malloc(MAX_NUM_OF_TERMS * sizeof(Term));
 
-  int i = 0;
-  while (1) {
+    int i = 0;
+    int highestDegree = 0;
     printf("Insert the terms of a continuous polynomial\n");
+    while (1) {
+        int coefficient = 1;
+        int degree = 0;
 
-    int coefficient = 1;
-    int degree = 0;
+        printf("Coefficient: ");
+        scanf("%d", &coefficient);
+        printf("Degree: ");
+        scanf("%d*c", &degree);
 
-    printf("Coefficient: ");
-    scanf("%d", &coefficient);
-    printf("Degree: ");
-    scanf("%d*c", &degree);
+        if(degree > highestDegree){
+            highestDegree = degree;
+        }
 
-    Term term;
-    term.coefficient = coefficient;
-    term.degree = degree;
+        Term term;
+        term.coefficient = coefficient;
+        term.degree = degree;
 
-    polynomial[i] = term;
+        polynomial->terms[i] = term;
 
-    printf("Add more terms? (y/n) ");
+        printf("Add more terms? (y/n) ");
+        char response;
+
+        scanf(" %c", &response);
+
+        if (response != 'y') {
+            break;
+        }
+        i++;
+    }
+    polynomial->numberOfTerms = i + 1;
+    printPolynomial(polynomial);
+
+    printf("Is this your polynomial? (y/n) ");
     char response;
     scanf(" %c", &response);
-
     if (response != 'y') {
-      break;
+        main();
     }
-    i++;
-  }
-  printPolynomial(polynomial, i + 1);
+    polynomial->degree = highestDegree;
+    printf("highestDegree: %d\n", polynomial->degree);
 
-  printf("Is this your polynomial? (y/n) ");
-  char response;
-  scanf(" %c", &response);
-  if (response != 'y') {
-    main();
-  }
+    double res = fOf(polynomial, 2);
+    printf("%f", res);
 
-  return 0;
+    return 0;
 }

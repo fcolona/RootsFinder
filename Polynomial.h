@@ -6,5 +6,11 @@ typedef struct Term {
 	//if the degree is zero, then it is an independent term
 } Term;
 
-void printPolynomial(Term *polynomial, int numberOfTerms);
-double fOf(Term* polynomial, double x, int numberOfTerms);
+typedef struct Polynomial {
+	int degree;
+	int numberOfTerms;
+	Term* terms;
+} Polynomial;
+
+void printPolynomial(Polynomial *polynomial);
+double fOf(Polynomial *polynomial, double x);

@@ -2,28 +2,28 @@
 #include <stdio.h>
 #include <math.h>
 
-void printPolynomial(Term *polynomial, int numberOfTerms) {
-  for (int i = 0; i < numberOfTerms; i++) {
-    if (polynomial[i].coefficient > 0 && i > 0) {
+void printPolynomial(Polynomial *polynomial) {
+  for (int i = 0; i < polynomial->numberOfTerms; i++) {
+    if (polynomial->terms[i].coefficient > 0 && i > 0) {
       printf("+ ");
     }
 
-    if (polynomial[i].degree == 1) {
-      printf("%dx ", polynomial[i].coefficient);
-    } else if (polynomial[i].degree == 0) {
-      printf("%d ", polynomial[i].coefficient);
+    if (polynomial->terms[i].degree == 1) {
+      printf("%dx ", polynomial->terms[i].coefficient);
+    } else if (polynomial->terms[i].degree == 0) {
+      printf("%d ", polynomial->terms[i].coefficient);
     } else {
-      printf("%dx^%d ", polynomial[i].coefficient, polynomial[i].degree);
+      printf("%dx^%d ", polynomial->terms[i].coefficient, polynomial->terms[i].degree);
     }
   }
   printf("\n");
 }
 
-double fOf(Term *polynomial, double x, int numberOfTerms){
+double fOf(Polynomial *polynomial, double x){
   double sum = 0;
 
-  for (int i = 0; i < numberOfTerms; i++) {
-      sum += pow(x, polynomial[i].degree) * polynomial[i].coefficient;;
+  for (int i = 0; i < polynomial->numberOfTerms; i++) {
+      sum += pow(x, polynomial->terms[i].degree) * polynomial->terms[i].coefficient;;
   }
   return sum;
 }
