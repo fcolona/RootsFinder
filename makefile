@@ -1,3 +1,3 @@
 main:
-	gcc main.c Polynomial.c -lm -o out.o
+	gcc main.c polynomial.c utils.c -lm -o out.o
 	./out.o

@@ -1,4 +1,4 @@
-#include "Polynomial.h"
+#include "polynomial.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -48,9 +48,8 @@ int main(void) {
         main();
     }
     polynomial->degree = highestDegree;
-    printf("highestDegree: %d\n", polynomial->degree);
 
-    double res = fOf(polynomial, 2);
+    double res = findRoot(polynomial);
     printf("%f", res);
 
     return 0;
