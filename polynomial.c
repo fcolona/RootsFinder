@@ -77,8 +77,6 @@ double findRoot(Polynomial *polynomial){
     }
 
     if(module(fOfNegativeOne) < module(fOfOne)){
-        //printf("Foi pro negativo\n");
-
         //last fOf(x) that was positive/negative
         double lastfOfX = fOfZero;
 
@@ -96,12 +94,34 @@ double findRoot(Polynomial *polynomial){
             if(lastfOfX < 0 && fOfX > 0){
                 //The root is in this interval
                 printf("beginning: %d, end: %d\n", lastX, x);
-                break;
+
+                double interval[2];
+                interval[0] = lastX;
+                interval[1] = x;
+
+                int i = 0;
+                while(i < DECIMAL_ROOTS_PRECISION ){
+                    refineInterval(polynomial, interval);
+                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                    i++;
+                }
+                return interval[0];
             }
             else if(lastfOfX  > 0 && fOfX < 0){
                 //The root is in this interval
                 printf("beginning: %d, end: %d\n", lastX, x);
-                break;
+
+                double interval[2];
+                interval[0] = lastX;
+                interval[1] = x;
+
+                int i = 0;
+                while(i < DECIMAL_ROOTS_PRECISION ){
+                    refineInterval(polynomial, interval);
+                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                    i++;
+                }
+                return interval[0];
             }
 
             lastfOfX = fOfX;
@@ -110,7 +130,6 @@ double findRoot(Polynomial *polynomial){
         }
     }
     else if(module(fOfNegativeOne) > module(fOfOne)){
-
         //last fOf(x) that was positive/negative
         double lastfOfX = fOfZero;
 
@@ -127,13 +146,35 @@ double findRoot(Polynomial *polynomial){
             //There was a change of sign
             if(lastfOfX < 0 && fOfX > 0){
                 //The root is in this interval
-                printf("beginning: %d, end: %d\n", lastX, x);
-                break;
+                //printf("beginning: %d, end: %d\n", lastX, x);
+
+                double interval[2];
+                interval[0] = lastX;
+                interval[1] = x;
+
+                int i = 0;
+                while(i < DECIMAL_ROOTS_PRECISION ){
+                    refineInterval(polynomial, interval);
+                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                    i++;
+                }
+                return interval[0];
             }
             else if(lastfOfX > 0 && fOfX < 0){
                 //The root is in this interval
-                printf("beginning: %d, end: %d\n", lastX, x);
-                break;
+                //printf("beginning: %d, end: %d\n", lastX, x);
+
+                double interval[2];
+                interval[0] = lastX;
+                interval[1] = x;
+
+                int i = 0;
+                while(i < DECIMAL_ROOTS_PRECISION ){
+                    refineInterval(polynomial, interval);
+                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                    i++;
+                }
+                return interval[0];
             }
 
             lastfOfX = fOfX;

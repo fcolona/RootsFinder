@@ -1,4 +1,5 @@
 #define MAX_NUM_OF_TERMS 5
+#define DECIMAL_ROOTS_PRECISION 9
 
 typedef struct Term {
     int coefficient;

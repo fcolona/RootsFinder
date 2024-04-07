@@ -49,8 +49,8 @@ int main(void) {
     }
     polynomial->degree = highestDegree;
 
-    double res = findRoot(polynomial);
-    printf("%f", res);
+    double root = findRoot(polynomial);
+    printf("%f\n", root);
 
     return 0;
 }
