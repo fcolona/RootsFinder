@@ -1,5 +1,6 @@
 #include "polynomial.h"
 #include "utils.h"
+#include <float.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -60,129 +61,154 @@ double* refineInterval(Polynomial *polynomial, double* interval){
     return interval;
 }
 
-double findRoot(Polynomial *polynomial){
+void findRoots(Polynomial *polynomial){
 
-    double fOfNegativeOne = fOf(polynomial, -1);
     double fOfZero = fOf(polynomial, 0);
-    double fOfOne = fOf(polynomial, 1);
 
-    if(fOfNegativeOne == 0){
-        return fOfNegativeOne;
-    }
-    else if(fOfZero == 0){
-        return fOfZero;
-    }
-    else if(fOfOne == 0){
-        return fOfOne;
-    }
+    //last fOf(x) that was positive/negative
+    double lastfOfX = fOfZero;
 
-    if(module(fOfNegativeOne) < module(fOfOne)){
-        //last fOf(x) that was positive/negative
-        double lastfOfX = fOfZero;
+    //last x that was positive/negative
+    int lastX = 0;
 
-        //last x that was positive/negative
-        int lastX = 0;
-
-        int x = 1;
-        while(1){
-            double fOfX = fOf(polynomial, x);
-            if(fOfX == 0){
-                return x;
+    int x = 1;
+    while(1){
+        double fOfX = fOf(polynomial, x);
+        if(fOfX == 0){
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = x;
+                    break;
+                };
             }
-
-            //There was a change of sign
-            if(lastfOfX < 0 && fOfX > 0){
-                //The root is in this interval
-                printf("beginning: %d, end: %d\n", lastX, x);
-
-                double interval[2];
-                interval[0] = lastX;
-                interval[1] = x;
-
-                int i = 0;
-                while(i < DECIMAL_ROOTS_PRECISION ){
-                    refineInterval(polynomial, interval);
-                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                    i++;
-                }
-                return interval[0];
-            }
-            else if(lastfOfX  > 0 && fOfX < 0){
-                //The root is in this interval
-                printf("beginning: %d, end: %d\n", lastX, x);
-
-                double interval[2];
-                interval[0] = lastX;
-                interval[1] = x;
-
-                int i = 0;
-                while(i < DECIMAL_ROOTS_PRECISION ){
-                    refineInterval(polynomial, interval);
-                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                    i++;
-                }
-                return interval[0];
-            }
-
-            lastfOfX = fOfX;
-            lastX = x;
-            x--;
+            break;
         }
-    }
-    else if(module(fOfNegativeOne) > module(fOfOne)){
-        //last fOf(x) that was positive/negative
-        double lastfOfX = fOfZero;
 
-        //last x that was positive/negative
-        int lastX = 0;
+        //There was a change of sign
+        if(lastfOfX < 0 && fOfX > 0){
+             //The root is in this interval
+            printf("beginning: %d, end: %d\n", lastX, x);
 
-        int x = 1;
-        while(1){
-            double fOfX = fOf(polynomial, x);
-            if(fOfX == 0){
-                return x;
+            double interval[2];
+            interval[0] = lastX;
+            interval[1] = x;
+
+            int i = 0;
+            while(i < DECIMAL_ROOTS_PRECISION ){
+                refineInterval(polynomial, interval);
+                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                i++;
             }
-
-            //There was a change of sign
-            if(lastfOfX < 0 && fOfX > 0){
-                //The root is in this interval
-                //printf("beginning: %d, end: %d\n", lastX, x);
-
-                double interval[2];
-                interval[0] = lastX;
-                interval[1] = x;
-
-                int i = 0;
-                while(i < DECIMAL_ROOTS_PRECISION ){
-                    refineInterval(polynomial, interval);
-                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                    i++;
-                }
-                return interval[0];
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = interval[0];
+                    break;
+                };
             }
-            else if(lastfOfX > 0 && fOfX < 0){
-                //The root is in this interval
-                //printf("beginning: %d, end: %d\n", lastX, x);
-
-                double interval[2];
-                interval[0] = lastX;
-                interval[1] = x;
-
-                int i = 0;
-                while(i < DECIMAL_ROOTS_PRECISION ){
-                    refineInterval(polynomial, interval);
-                    //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                    i++;
-                }
-                return interval[0];
-            }
-
-            lastfOfX = fOfX;
-            lastX = x;
-            x++;
+            break;
         }
+        else if(lastfOfX  > 0 && fOfX < 0){
+            //The root is in this interval
+            printf("beginning: %d, end: %d\n", lastX, x);
+
+            double interval[2];
+            interval[0] = lastX;
+            interval[1] = x;
+
+            int i = 0;
+            while(i < DECIMAL_ROOTS_PRECISION ){
+                refineInterval(polynomial, interval);
+                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                i++;
+            }
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = interval[0];
+                    break;
+                };
+            }
+            break;
+        }
+
+        lastfOfX = fOfX;
+        lastX = x;
+        x--;
     }
 
-    return -1;
+    //last fOf(x) that was positive/negative
+    lastfOfX = fOfZero;
+
+    //last x that was positive/negative
+    lastX = 0;
+
+    x = 1;
+    while(1){
+        double fOfX = fOf(polynomial, x);
+        if(fOfX == 0){
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = x;
+                    break;
+                };
+            }
+            break;
+        }
+
+        //There was a change of sign
+        if(lastfOfX < 0 && fOfX > 0){
+            //The root is in this interval
+            //printf("beginning: %d, end: %d\n", lastX, x);
+
+            double interval[2];
+            interval[0] = lastX;
+            interval[1] = x;
+
+            int i = 0;
+            while(i < DECIMAL_ROOTS_PRECISION ){
+                refineInterval(polynomial, interval);
+                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                i++;
+            }
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = interval[0];
+                    break;
+                };
+            }
+            break;
+        }
+        else if(lastfOfX > 0 && fOfX < 0){
+            //The root is in this interval
+            //printf("beginning: %d, end: %d\n", lastX, x);
+
+            double interval[2];
+            interval[0] = lastX;
+            interval[1] = x;
+
+            int i = 0;
+            while(i < DECIMAL_ROOTS_PRECISION ){
+                refineInterval(polynomial, interval);
+                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
+                i++;
+            }
+            for (int i = 0; i < polynomial->degree; i++) {
+                //It means that the array at position i does not have a meaningful value
+                if(polynomial->roots[i] == DBL_MAX){
+                    polynomial->roots[i] = interval[0];
+                    break;
+                };
+            }
+            break;
+        }
+
+        lastfOfX = fOfX;
+        lastX = x;
+        x++;
+    }
 }
 

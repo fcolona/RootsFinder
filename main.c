@@ -1,4 +1,5 @@
 #include "polynomial.h"
+#include <float.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -39,6 +40,7 @@ int main(void) {
         i++;
     }
     polynomial->numberOfTerms = i + 1;
+
     printPolynomial(polynomial);
 
     printf("Is this your polynomial? (y/n) ");
@@ -48,9 +50,19 @@ int main(void) {
         main();
     }
     polynomial->degree = highestDegree;
+    polynomial->roots = malloc(sizeof(typeof(polynomial->degree)));
+    polynomial->roots = malloc(sizeof(typeof(double)) * polynomial->degree);
 
-    double root = findRoot(polynomial);
-    printf("%f\n", root);
+    //Fill roots array with junk value
+    //In order to further verify if an array element has not been initialized
+    for (int i = 0 ; i < polynomial->degree; i++) {
+        polynomial->roots[i] = DBL_MAX;
+    }
+
+    findRoots(polynomial);
+    for (int i = 0; i < polynomial->degree; i++) {
+        printf("roots[%d]: %f\n", i, polynomial->roots[i]);
+    }
 
     return 0;
 }

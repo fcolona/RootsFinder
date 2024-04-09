@@ -11,9 +11,10 @@ typedef struct Polynomial {
     int degree;
 	int numberOfTerms;
 	Term* terms;
+    double *roots;
 } Polynomial;
 
 void printPolynomial(Polynomial *polynomial);
 double fOf(Polynomial *polynomial, double x);
-double findRoot(Polynomial *polynomial);
+void findRoots(Polynomial *polynomial);
 double* refineInterval(Polynomial *polynomial, double* interval);
