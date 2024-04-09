@@ -74,7 +74,6 @@ void* searchLeft(void *polynomialArg){
 
     //last x that was positive/negative
     int lastX = 0;
-
     int x = 0;
 
     while(1){
@@ -138,10 +137,6 @@ void* searchLeft(void *polynomialArg){
 
 
 void* searchRight(void *polynomialArg){
-    if(continueToSearchFlag != 1){
-        return NULL;
-    }
-
     Polynomial* polynomial = (Polynomial*) polynomialArg;
 
     double fOfZero = fOf(polynomial, 0);
@@ -154,6 +149,11 @@ void* searchRight(void *polynomialArg){
     int x = 1;
 
     while(1){
+        if(continueToSearchFlag != 1){
+            return NULL;
+        }
+
+
         double fOfX = fOf(polynomial, x);
         if(fOfX == 0){
             pthread_mutex_lock(&polynomial->lock);
