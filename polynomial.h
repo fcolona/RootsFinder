@@ -1,3 +1,4 @@
+#include <pthread.h>
 #define MAX_NUM_OF_TERMS 5
 #define DECIMAL_ROOTS_PRECISION 9
 
@@ -11,6 +12,7 @@ typedef struct Polynomial {
     int degree;
 	int numberOfTerms;
 	Term* terms;
+    pthread_mutex_t lock;
     double *roots;
 } Polynomial;
 

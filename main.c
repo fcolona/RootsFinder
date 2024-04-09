@@ -1,5 +1,6 @@
 #include "polynomial.h"
 #include <float.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -50,8 +51,8 @@ int main(void) {
         main();
     }
     polynomial->degree = highestDegree;
-    polynomial->roots = malloc(sizeof(typeof(polynomial->degree)));
     polynomial->roots = malloc(sizeof(typeof(double)) * polynomial->degree);
+    pthread_mutex_init(&polynomial->lock, NULL);
 
     //Fill roots array with junk value
     //In order to further verify if an array element has not been initialized
