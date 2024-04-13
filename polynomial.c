@@ -1,5 +1,6 @@
 #include "polynomial.h"
 #include "utils.h"
+#include <stdlib.h>
 #include <float.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -38,30 +39,54 @@ double fOf(Polynomial *polynomial, double x){
     return sum;
 }
 
-double* refineInterval(Polynomial *polynomial, double* interval){
-    double middle = (interval[0] + interval[1])/2;    
+void* refineInterval(void *polynomialAndIntervalArg){
+    PolynomialAndInterval* polynomialAndInterval = (PolynomialAndInterval*) polynomialAndIntervalArg;
+    double *interval = polynomialAndInterval->interval;
+    Polynomial *polynomial = polynomialAndInterval->polynomial;
 
-    double fOfMiddle = fOf(polynomial, middle);
-    if(fOfMiddle == 0){
-        interval[0] = middle;
-        interval[1] = middle;
+    int i = 0;
+    while(i < DECIMAL_ROOTS_PRECISION ){
+        double middle = (interval[0] + interval[1])/2;    
 
-        return interval;
-    }
-    else if(fOfMiddle < 0){
-        if(fOf(polynomial, interval[0]) < 0){
+        double fOfMiddle = fOf(polynomial, middle);
+        if(fOfMiddle == 0){
             interval[0] = middle;
-            return interval;
+            interval[1] = middle;
+        }
+        else if(fOfMiddle < 0){
+            if(fOf(polynomial, interval[0]) < 0){
+                interval[0] = middle;
+                continue;
+            }
+            interval[1] = middle;
+        }
+        else if(fOf(polynomial, interval[0]) > 0){
+            interval[0] = middle;
+            continue;
         }
         interval[1] = middle;
-        return interval;
+        i++;
     }
-    else if(fOf(polynomial, interval[0]) > 0){
-        interval[0] = middle;
-        return interval;
+
+    printf("root: %f\n", interval[0]);
+    pthread_mutex_lock(&polynomial->lock);
+    i = 0;
+    while (i < polynomial->degree) {
+        if(polynomial->roots[i] == DBL_MAX){
+            polynomial->roots[i] = interval[0];
+            break;
+        };
+        i++;
     }
-    interval[1] = middle;
-    return interval;
+    pthread_mutex_unlock(&polynomial->lock);
+
+    int indexOfLastRootFound = i + 1;
+    //Checks if all roots have been found;
+    if(indexOfLastRootFound == polynomial->degree){
+        continueToSearchFlag = 0;
+    }
+    
+    return NULL;
 }
 
 void* searchLeft(void *polynomialArg){
@@ -83,6 +108,8 @@ void* searchLeft(void *polynomialArg){
 
         double fOfX = fOf(polynomial, x);
         if(fOfX == 0){
+
+            printf("root: %d\n", x);
             pthread_mutex_lock(&polynomial->lock);
 
             int i = 0;
@@ -104,29 +131,17 @@ void* searchLeft(void *polynomialArg){
             }
         }
 
-        //There was a change of sign
+        //Check if there was a change of sign
         if((lastfOfX < 0 && fOfX > 0) || (lastfOfX  > 0 && fOfX < 0)){
-             //The root is in this interval
-            printf("beginning: %d, end: %d\n", lastX, x);
+            pthread_t refineThread;
 
-            double interval[2];
-            interval[0] = lastX;
-            interval[1] = x;
+            PolynomialAndInterval *polynomialAndInterval = malloc(sizeof(PolynomialAndInterval));
+            polynomialAndInterval->polynomial = polynomial;
+            polynomialAndInterval->interval = malloc(2 * sizeof(double));
+            polynomialAndInterval->interval[0] = lastX;
+            polynomialAndInterval->interval[1] = x;
 
-            int i = 0;
-            while(i < DECIMAL_ROOTS_PRECISION ){
-                refineInterval(polynomial, interval);
-                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                i++;
-            }
-            for (int i = 0; i < polynomial->degree; i++) {
-                //It means that the array at position i does not have a meaningful value
-                if(polynomial->roots[i] == DBL_MAX){
-                    polynomial->roots[i] = interval[0];
-                    break;
-                };
-            }
-            break;
+            pthread_create(&refineThread, NULL, refineInterval, (void*)polynomialAndInterval);
         }
         lastfOfX = fOfX;
         lastX = x;
@@ -156,6 +171,7 @@ void* searchRight(void *polynomialArg){
 
         double fOfX = fOf(polynomial, x);
         if(fOfX == 0){
+            printf("root: %d\n", x);
             pthread_mutex_lock(&polynomial->lock);
 
             int i = 0;
@@ -179,27 +195,15 @@ void* searchRight(void *polynomialArg){
 
         //There was a change of sign
         if((lastfOfX < 0 && fOfX > 0) || (lastfOfX  > 0 && fOfX < 0)){
-            //The root is in this interval
-            //printf("beginning: %d, end: %d\n", lastX, x);
+            pthread_t refineThread;
 
-            double interval[2];
-            interval[0] = lastX;
-            interval[1] = x;
+            PolynomialAndInterval *polynomialAndInterval = malloc(sizeof(PolynomialAndInterval));
+            polynomialAndInterval->polynomial = polynomial;
+            polynomialAndInterval->interval = malloc(2 * sizeof(double));
+            polynomialAndInterval->interval[0] = lastX;
+            polynomialAndInterval->interval[1] = x;
 
-            int i = 0;
-            while(i < DECIMAL_ROOTS_PRECISION ){
-                refineInterval(polynomial, interval);
-                //printf("beginning: %f, end: %f\n", interval[0], interval[1]);
-                i++;
-            }
-            for (int i = 0; i < polynomial->degree; i++) {
-                //It means that the array at position i does not have a meaningful value
-                if(polynomial->roots[i] == DBL_MAX){
-                    polynomial->roots[i] = interval[0];
-                    break;
-                };
-            }
-            break;
+            pthread_create(&refineThread, NULL, refineInterval, (void*)polynomialAndInterval);
         }
         lastfOfX = fOfX;
         lastX = x;

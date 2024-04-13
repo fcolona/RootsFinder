@@ -1,7 +1,11 @@
-#include <pthread.h>
+#ifndef POLYNOMIAL_H
+#define POLYNOMIAL_H 
+
 #define MAX_NUM_OF_TERMS 5
 #define DECIMAL_ROOTS_PRECISION 9
 
+
+#include <pthread.h>
 typedef struct Term {
     int coefficient;
 	int degree;
@@ -19,4 +23,5 @@ typedef struct Polynomial {
 void printPolynomial(Polynomial *polynomial);
 double fOf(Polynomial *polynomial, double x);
 void findRoots(Polynomial *polynomial);
-double* refineInterval(Polynomial *polynomial, double* interval);
+void* refineInterval(void *polynomialAndInterval);
+#endif

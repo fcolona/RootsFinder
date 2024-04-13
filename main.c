@@ -61,9 +61,6 @@ int main(void) {
     }
 
     findRoots(polynomial);
-    for (int i = 0; i < polynomial->degree; i++) {
-        printf("roots[%d]: %f\n", i, polynomial->roots[i]);
-    }
 
     return 0;
 }
