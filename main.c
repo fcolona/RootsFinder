@@ -50,6 +50,7 @@ int main(void) {
     if (response != 'y') {
         main();
     }
+    printf("\n");
     polynomial->degree = highestDegree;
     polynomial->roots = malloc(sizeof(typeof(double)) * polynomial->degree);
     pthread_mutex_init(&polynomial->lock, NULL);
