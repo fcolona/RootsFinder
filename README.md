@@ -8,7 +8,7 @@ This project consists of a multithreaded search algorithm that seeks roots of a 
 
 
 ## Project motivation
-The idea of this project originated from one of my calculus 1 classes where I learned the Weierstrass theorem. When hearing about such theorem, I immediately thought of implementing an algorithm to approximate roots and ended up including integer ones as well. Moreover, I took this project as a way to improve my C programming skills and learn about multithreading and parallelism.
+The idea of this project originated from one of my calculus 1 classes where I learned the Intermediate Value Theorem. When hearing about such theorem, I immediately thought of implementing an algorithm to approximate roots and ended up including integer ones as well. Moreover, I took this project as a way to improve my C programming skills and learn about multithreading and parallelism.
 
 
 
